@@ -68,14 +68,73 @@ with col1:
 with col2:
     st.header("🔮 Predicción en Tiempo Real")
     
-    # Vector de entrada para la inferencia
-    features_input = np.array([[input_precio, input_lead, input_stock, input_festividad, input_vias, input_criticidad]])
+    # Vector de entrada para la inferencia (usando DataFrame para evitar advertencias de nombres de columnas)
+    features_input = pd.DataFrame(
+        [[input_precio, input_lead, input_stock, input_festividad, input_vias, input_criticidad]], 
+        columns=X.columns
+    )
     
     pred_gb = gb_model.predict(features_input)[0]
     pred_rf = rf_model.predict(features_input)[0]
     
-    st.metric(label="Predicción Demanda - Gradient Boosting (Recomendado)", value=f"{int(pred_gb)} Unidades")
-    st.metric(label="Predicción Demanda - Random Forest", value=f"{int(pred_rf)} Unidades")
+    # Contenedor de métricas lado a lado
+    col_m1, col_m2 = st.columns(2)
+    with col_m1:
+        st.metric(label="Gradient Boosting (Recomendado)", value=f"{int(pred_gb)} Unidades")
+    with col_m2:
+        st.metric(label="Random Forest", value=f"{int(pred_rf)} Unidades")
+        
+    # Gráfico de comparación de barras
+    st.subheader("📊 Comparación de Proyecciones vs. Promedio Histórico")
+    promedio_historico = df['Ventas_Unidades'].mean()
+    chart_data = pd.DataFrame({
+        "Modelo / Escenario": ["Promedio Histórico", "Gradient Boosting (Rec.)", "Random Forest"],
+        "Demanda Predictiva (Unidades)": [promedio_historico, pred_gb, pred_rf],
+        "Color": ["#888888", "#2ca02c", "#1f77b4"]
+    })
+    st.bar_chart(
+        chart_data,
+        x="Modelo / Escenario",
+        y="Demanda Predictiva (Unidades)",
+        use_container_width=True
+    )
+
+# 4.5. Gráfico de Sensibilidad al Precio (Curva de Demanda Dinámica)
+st.markdown("---")
+st.header("📈 Curva de Demanda Dinámica (Sensibilidad al Precio)")
+st.write("El siguiente gráfico simula la demanda esperada si variáramos únicamente el **Precio Unitario**, manteniendo las demás variables fijas según tu configuración en el panel lateral.")
+
+# Generar un rango de precios desde el mínimo al máximo registrado
+precios_simulados = np.linspace(float(df['Precio_Unit'].min()), float(df['Precio_Unit'].max()), 50)
+
+# Construir DataFrame de prueba para evitar advertencias de nombres de columnas
+sensitivity_features = pd.DataFrame(np.zeros((len(precios_simulados), 6)), columns=X.columns)
+sensitivity_features['Precio_Unit'] = precios_simulados
+sensitivity_features['Lead_Time'] = input_lead
+sensitivity_features['Stock_Seg'] = input_stock
+sensitivity_features['Festividad'] = input_festividad
+sensitivity_features['Estado_Vias'] = input_vias
+sensitivity_features['Criticidad'] = input_criticidad
+
+# Predicciones simultáneas
+y_pred_gb_sim = gb_model.predict(sensitivity_features)
+y_pred_rf_sim = rf_model.predict(sensitivity_features)
+
+# DataFrame para graficar
+sensitivity_df = pd.DataFrame({
+    "Precio Unitario (USD)": precios_simulados,
+    "Gradient Boosting (Rec.)": y_pred_gb_sim,
+    "Random Forest": y_pred_rf_sim
+})
+
+# Graficar curva de sensibilidad
+st.line_chart(
+    sensitivity_df,
+    x="Precio Unitario (USD)",
+    y=["Gradient Boosting (Rec.)", "Random Forest"],
+    use_container_width=True
+)
+
 
 # 5. Tabla Dinámica del Dataset
 st.header("📋 Historial del Dataset Registrado")

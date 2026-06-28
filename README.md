@@ -16,6 +16,7 @@ FICA - Inteligencia Artificial I (Progreso 3)
 - [Arquitectura y Pipeline](#-arquitectura-y-pipeline)
 - [Modelos en Comparación](#-modelos-en-comparación)
 - [Métricas de Rendimiento](#-métricas-de-rendimiento)
+- [Gráficos Interactivos y Sensibilidad](#-gráficos-interactivos-y-sensibilidad)
 - [Guía de Instalación y Ejecución](#-guía-de-instalación-y-ejecución)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
 
@@ -24,6 +25,7 @@ FICA - Inteligencia Artificial I (Progreso 3)
 ## ✨ Características del Sistema
 
 * **Inferencia en Tiempo Real**: Panel de control interactivo para manipular variables operativas (precio, stock) y geográficas/ambientales (vías cerradas, feriados).
+* **Visualización Dinámica**: Gráficos interactivos de comparación y curvas de comportamiento macroeconómico en tiempo real.
 * **Entrenamiento Dual Automatizado**: Compara al instante dos grupos experimentales en el backend.
 * **Carga Eficiente de Datos**: Implementación de caché de datos en Streamlit para agilizar la lectura de archivos grandes.
 * **Diseño Visual Moderno**: Interfaz adaptativa, limpia y optimizada para la toma de decisiones empresariales.
@@ -122,6 +124,15 @@ python -m streamlit run app.py
 ```
 
 El navegador se abrirá automáticamente en la dirección: **`http://localhost:8501`**
+
+---
+
+## 📈 Gráficos Interactivos y Sensibilidad
+
+El sistema integra visualizaciones automáticas basadas en la librería Altair nativa de Streamlit, ideales para soporte en presentaciones ejecutivas y análisis comercial:
+
+1. **Comparativa vs. Promedio Histórico**: Muestra un gráfico de barras comparando la demanda estimada de ambos modelos de IA contra la media general histórica de ventas diarias.
+2. **Curva de Demanda Dinámica (Sensibilidad al Precio)**: Genera una curva interactiva de precio unitario vs. demanda diaria estimada. Cuando el usuario cambia variables del entorno en el panel lateral (vías, festividades, criticidad), **toda la curva de demanda se desplaza verticalmente** en tiempo real, demostrando visualmente conceptos de microeconomía clásica y elasticidad de precio.
 
 ---
 

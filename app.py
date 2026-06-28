@@ -83,21 +83,7 @@ with col2:
         st.metric(label="Gradient Boosting (Recomendado)", value=f"{int(pred_gb)} Unidades")
     with col_m2:
         st.metric(label="Random Forest", value=f"{int(pred_rf)} Unidades")
-        
-    # Gráfico de comparación de barras
-    st.subheader("📊 Comparación de Proyecciones vs. Promedio Histórico")
-    promedio_historico = df['Ventas_Unidades'].mean()
-    chart_data = pd.DataFrame({
-        "Modelo / Escenario": ["Promedio Histórico", "Gradient Boosting (Rec.)", "Random Forest"],
-        "Demanda Predictiva (Unidades)": [promedio_historico, pred_gb, pred_rf],
-        "Color": ["#888888", "#2ca02c", "#1f77b4"]
-    })
-    st.bar_chart(
-        chart_data,
-        x="Modelo / Escenario",
-        y="Demanda Predictiva (Unidades)",
-        use_container_width=True
-    )
+
 
 # 4.5. Gráfico de Sensibilidad al Precio (Curva de Demanda Dinámica)
 st.markdown("---")
